@@ -1,0 +1,9 @@
+/* Main Container */
+#main-container {
+    padding-top: 5.5rem;
+}
+
+/* Navbar */
+nav#main-navbar {
+    border-bottom: 2px solid red;
+}
