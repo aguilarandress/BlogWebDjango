@@ -1,0 +1,23 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+<h1>{{titulo}}</h1>
+<div class="container">
+    <label for="nombre"><b>Nombre de Usuario</b></label>
+    <input type="text" placeholder="Nombre de usuario" name="nombre" required>
+</div>
+<div class="container">
+    <label for="contraseña"> <b>Digite su Contraseña</b> </label>
+    <input type="text" placeholder="Escriba su contraseña" name="contraseña" required>
+</div>
+<div class="container">
+    <button type="submit">Iniciar</button>
+
+
+    <button type="button" class="cancelbtn">Cancel</button>
+    <span class="contraseña">Forgot <a href="#">password?</a></span>
+
+
+</div>
+
+{% endblock %}
