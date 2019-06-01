@@ -8,7 +8,7 @@ def index(request):
     """Carga la página index del blog
 
     Entradas:
-        request: Es un objeto que representa un request
+        request: es un objeto de petición Http
     Precondiciones:
         No hay
     Salidas:
@@ -21,6 +21,17 @@ def index(request):
 
 
 def registrarNuevoUsuario(request):
+    """Registra un usuario nuevo
+
+    Entradas:
+        request: es un objeto de petición Http
+    Precondiciones:
+        No hay
+    Salidas:
+        Retorna un template cuando se carga la interfaz y
+        retorna un HttpResponseRedirect cuando un usuario se
+        registra con éxito
+    """
     if request.method == "POST":
         nombreDeUsuario = request.POST["nombre"]
         email = request.POST["email"]

@@ -1,13 +1,15 @@
 {% extends 'blog/layout.html' %}
 
 {% block content %}
-<h1>{{titulo}}</h1>
-<body>
-    <a>Si no tiene un usuario puede crearlo abajo</a>
-    <a href="{ url 'blog:iniciarSesion' }" class="nav-link">
-        Cree su Usuario
-    </a>
-
-</body>
-
+<h2 class="mb-3">Iniciar Sesión</h2>
+<form>
+    <div class="form-group">
+        <input type="text" class="form-control" name="nombre" placeholder="Nombre de usuario...">
+    </div>
+    <div class="form-group">
+        <input type="password" class="form-control" name="contraseña" placeholder="Contraseña...">
+    </div>
+    <input type="submit" value="Iniciar sesión" class="btn btn-block btn-primary my-3">
+</form>
+<a href="{% url 'blog:registrarNuevoUsuario' %}" class="btn-link">¿No tiene cuenta? Regístrese</a>
 {% endblock %}
