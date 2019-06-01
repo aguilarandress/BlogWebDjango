@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 
@@ -17,63 +18,19 @@ def index(request):
         "titulo": "TEC Blog, by Andrew & Andres"
     }
     return render(request, "blog/index.html", context)
-# Create your views here.
 
 
-def inicioSesion(request):
-    """Carga la página iniciar sesion en el blog
-
-        Entradas:
-            request: Es un objeto que representa un request
-        Precondiciones:
-            No hay
-        Salidas:
-            Retorna una respuesta al usuario
-        """
-    context = {
-        "titulo": "TEC Blog, inicio de sesión"
-    }
-
-    return render(request, "blog/inicioSesion.html", context)
-
-
-def crearUsuario(request):
-    """Carga la página crearUsuarios del blog
-
-        Entradas:
-            request: Es un objeto que representa un request
-        Precondiciones:
-            No hay
-        Salidas:
-            Retorna una respuesta al usuario
-        """
-    context = {
-        "titulo": "TEC Blog, crear usuario"
-    }
-    return render(request, "blog/crearUsuario.html", context)
-
-
-def agregarUsuariosBaseDD(request):
-    """Carga la página crearUsuarios del blog
-
-        Entradas:
-            request: Es un objeto que representa un request
-        Precondiciones:
-            No hay
-        Salidas:
-            Retorna una respuesta al usuario
-        """
-    context = {
-        "titulo": "TEC Blog, crear usuario"
-    }
+def registrarNuevoUsuario(request):
     if request.method == "POST":
-        nombre = request.POST["nombre"]
-        contra = request.POST["contra"]
-        correo = request.POST["correo"]
-        usuario = User.objects.create_user(nombre, correo, contra)
-
-
-        return HttpResponseRedirect("#")
+        nombreDeUsuario = request.POST["nombre"]
+        email = request.POST["email"]
+        contraseña = request.POST["contraseña"]
+        usuarioNuevo = User.objects.create_user(nombreDeUsuario, email, contraseña)
+        usuarioNuevo.save()
+        return HttpResponseRedirect(reverse("blog:iniciarSesion"))
     else:
+        return render(request, "blog/registrar.html")
 
-        return render(request, "blog/agregarUsuariosBaseDD.html", context)
+
+def iniciarSesion(request):
+    return render(request, "blog/iniciarSesion.html")

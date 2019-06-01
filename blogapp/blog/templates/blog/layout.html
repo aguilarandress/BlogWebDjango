@@ -30,7 +30,12 @@
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a href="inicioSesion/" class="nav-link">
+                        <a href="{% url 'blog:registrarNuevoUsuario' %}" class="nav-link">
+                            Registrarse
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'blog:iniciarSesion' %}" class="nav-link">
                             Iniciar Sesión
                         </a>
                     </li>
