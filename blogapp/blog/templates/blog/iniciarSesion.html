@@ -1,0 +1,13 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+<h1>{{titulo}}</h1>
+<body>
+    <a>Si no tiene un usuario puede crearlo abajo</a>
+    <a href="{ url 'blog:iniciarSesion' }" class="nav-link">
+        Cree su Usuario
+    </a>
+
+</body>
+
+{% endblock %}

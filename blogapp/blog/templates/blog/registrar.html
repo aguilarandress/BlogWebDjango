@@ -1,0 +1,38 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card card-body bg-light">
+            <h3>Registrar nuevo usuario</h3>
+            <p><strong>Todos</strong> los campos necesitan estar completos para registrarse.</p>
+            <form action="{% url 'blog:registrarNuevoUsuario' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="email" name="email" class="form-control form-control-lg" placeholder="Email...">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="nombre" class="form-control form-control-lg"
+                        placeholder="Nombre de usuario...">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="contraseña" class="form-control form-control-lg"
+                        placeholder="Contraseña...">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="contraseña2" class="form-control form-control-lg"
+                        placeholder="Confirmar contraseña...">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="submit" value="Registrarse" class="btn btn-success btn-block mb-2">
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'blog:iniciarSesion' %}" class="btn btn-secondary btn-block mb-2">Registrado? Iniciar sesión</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
