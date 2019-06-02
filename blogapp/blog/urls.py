@@ -6,5 +6,6 @@ app_name = "blog"
 urlpatterns = [
     path("", views.index, name="index"),
     path("registrar/", views.registrarNuevoUsuario, name="registrarNuevoUsuario"),
-    path("iniciarSesion/", views.iniciarSesion, name="iniciarSesion")
+    path("iniciarSesion/", views.iniciarSesion, name="iniciarSesion"),
+    path("blogInicio/", views.paginaInicio, name="paginaInicio")
 ]

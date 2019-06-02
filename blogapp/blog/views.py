@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-
+from django.contrib.auth import authenticate, login
+from django.db import IntegrityError
 
 def index(request):
     """Carga la página index del blog
@@ -36,12 +37,38 @@ def registrarNuevoUsuario(request):
         nombreDeUsuario = request.POST["nombre"]
         email = request.POST["email"]
         contraseña = request.POST["contraseña"]
-        usuarioNuevo = User.objects.create_user(nombreDeUsuario, email, contraseña)
-        usuarioNuevo.save()
-        return HttpResponseRedirect(reverse("blog:iniciarSesion"))
+        usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
+        if usuario is not None:
+            return HttpResponseRedirect(reverse("blog:registrarNuevoUsuario"))
+        else:
+            try:
+                usuarioNuevo = User.objects.create_user(nombreDeUsuario, email, contraseña)
+                usuarioNuevo.save()
+                return HttpResponseRedirect(reverse("blog:iniciarSesion"))
+            except IntegrityError:
+                return HttpResponseRedirect(reverse("blog:registrarNuevoUsuario"))
+
     else:
         return render(request, "blog/registrar.html")
 
 
 def iniciarSesion(request):
-    return render(request, "blog/iniciarSesion.html")
+    if request.method == "POST":
+        nombreDeUsuario = request.POST["nombre"]
+        contraseña = request.POST["contraseña"]
+        usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
+        if usuario is not None:
+            login(request, usuario)
+            return HttpResponseRedirect(reverse("blog:paginaInicio"))
+        else:
+            return HttpResponseRedirect(reverse("blog:iniciarSesion"))
+
+    else:
+
+        return render(request, "blog/iniciarSesion.html")
+
+
+def paginaInicio(request):
+
+    return render(request, "blog/paginaInicio.html")
+
