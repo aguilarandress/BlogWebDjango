@@ -14,7 +14,7 @@
 <body>
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary" id="main-navbar">
         <div class="container">
-            <a href="#" class="navbar-brand">
+            <a href="{% url 'blog:index' %}" class="navbar-brand">
                 TEC Blog
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content">
@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbar-content">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'blog:index' %}" class="nav-link">
                             Inicio
                         </a>
                     </li>
@@ -44,6 +44,11 @@
         </div>
     </nav>
     <div class="container" id="main-container">
+        {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{message.tags}}">{{ message }}</div>
+                {% endfor %}
+        {% endif %}
         {% block content %}
         {% endblock %}
     </div>

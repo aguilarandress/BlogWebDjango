@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django.db import IntegrityError
+from django.contrib import messages
 
 
 def index(request):
@@ -17,7 +17,7 @@ def index(request):
         Retorna una respuesta al usuario
     """
     context = {
-        "titulo": "TEC Blog, by Andrew & Andres"
+        "titulo": "Últimos posts publicados"
     }
     return render(request, "blog/index.html", context)
 
@@ -38,16 +38,10 @@ def registrarNuevoUsuario(request):
         nombreDeUsuario = request.POST["nombre"]
         email = request.POST["email"]
         contraseña = request.POST["contraseña"]
-        usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
-        if usuario is not None:
-            return HttpResponseRedirect(reverse("blog:registrarNuevoUsuario"))
-        else:
-            try:
-                usuarioNuevo = User.objects.create_user(nombreDeUsuario, email, contraseña)
-                usuarioNuevo.save()
-                return HttpResponseRedirect(reverse("blog:iniciarSesion"))
-            except IntegrityError:
-                return HttpResponseRedirect(reverse("blog:registrarNuevoUsuario"))
+        usuarioNuevo = User.objects.create_user(nombreDeUsuario, email, contraseña)
+        usuarioNuevo.save()
+        messages.success(request, "Usuario registrado")
+        return HttpResponseRedirect(reverse("blog:iniciarSesion"))
     else:
         return render(request, "blog/registrar.html")
 
@@ -70,6 +64,7 @@ def iniciarSesion(request):
         usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
         if usuario is not None:
             login(request, usuario)
+            messages.success(request, "Ha iniciado sesión correctamente")
             return HttpResponseRedirect(reverse("blog:index"))
         else:
             return HttpResponseRedirect(reverse("blog:iniciarSesion"))
