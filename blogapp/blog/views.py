@@ -71,3 +71,7 @@ def iniciarSesion(request):
     else:
         return render(request, "blog/iniciarSesion.html")
 
+
+MESSAGE_TAGS = {
+    ""
+}
