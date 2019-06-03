@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 
+
 def index(request):
     """Carga la página index del blog
 
@@ -47,28 +48,31 @@ def registrarNuevoUsuario(request):
                 return HttpResponseRedirect(reverse("blog:iniciarSesion"))
             except IntegrityError:
                 return HttpResponseRedirect(reverse("blog:registrarNuevoUsuario"))
-
     else:
         return render(request, "blog/registrar.html")
 
 
 def iniciarSesion(request):
+    """Registra un usuario nuevo
+
+    Entradas:
+        request: es un objeto de petición Http
+    Precondiciones:
+        No hay
+    Salidas:
+        Retorna un template cuando se carga la interfaz y
+        retorna un HttpResponseRedirect cuando un usuario se
+        registra con éxito
+    """
     if request.method == "POST":
         nombreDeUsuario = request.POST["nombre"]
         contraseña = request.POST["contraseña"]
         usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
         if usuario is not None:
             login(request, usuario)
-            return HttpResponseRedirect(reverse("blog:paginaInicio"))
+            return HttpResponseRedirect(reverse("blog:index"))
         else:
             return HttpResponseRedirect(reverse("blog:iniciarSesion"))
-
     else:
-
         return render(request, "blog/iniciarSesion.html")
-
-
-def paginaInicio(request):
-
-    return render(request, "blog/paginaInicio.html")
 
