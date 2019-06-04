@@ -127,7 +127,9 @@ def cerrarSesion(request):
 @login_required(login_url='/iniciarSesion/')
 def crearPost(request):
     if request.method == "POST":
-        form = BlogPost()
+        titulo = request.POST["titulo"]
+        contenido = request.POST["contenido"]
+        form = BlogPost(titulo=titulo, contenido=contenido)
         form.save()
         return HttpResponseRedirect(reverse("blog:index"))
     else:
