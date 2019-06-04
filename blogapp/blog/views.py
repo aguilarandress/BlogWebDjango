@@ -43,14 +43,26 @@ def registrarNuevoUsuario(request):
             "contraseña": request.POST["contraseña"],
             "contraseña2": request.POST["contraseña2"]
         }
-        # TODO: Validar datos del formulario
+
+        # Validar datos del formulario
         if not validarDatosDeRegistro(usuario)["esValido"]:
             for mensaje in validarDatosDeRegistro(usuario)["mensajes"]:
                 messages.error(request, mensaje)
             return render(request, "blog/registrar.html", usuario)
+
+        # Revisar si existe un usuario con el nombre
+        if User.objects.filter(username=usuario["nombre"]).exists():
+            messages.error(request, "El nombre de usuario ya existe")
+            return render(request, "blog/registrar.html", usuario)
+
+        # Revisar si existe un usuario con el nombre
+        if User.objects.filter(email=usuario["email"]).exists():
+            messages.error(request, "El correo utilizado ya existe")
+            return render(request, "blog/registrar.html", usuario)
+
+        # Registrar usuario
         usuarioNuevo = User.objects.create_user(usuario["nombre"], usuario["email"], usuario["contraseña"])
         usuarioNuevo.save()
-
         messages.success(request, "Usuario registrado")
         return HttpResponseRedirect(reverse("blog:iniciarSesion"))
     else:
