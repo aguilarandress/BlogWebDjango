@@ -16,10 +16,15 @@ def index(request):
     Salidas:
         Retorna una respuesta al usuario
     """
-    context = {
-        "titulo": "Últimos posts publicados"
-    }
-    return render(request, "blog/index.html", context)
+    if request.method == "POST":
+        tituloPost = request.POST["titulo"]
+        contenidoPosr= request.POST["contenidoPost"]
+        return HttpResponseRedirect(reverse("blog:index"))
+    else:
+        context = {
+            "titulo": "Últimos posts publicados"
+        }
+        return render(request, "blog/index.html", context)
 
 
 def registrarNuevoUsuario(request):
@@ -71,3 +76,9 @@ def iniciarSesion(request):
     else:
         return render(request, "blog/iniciarSesion.html")
 
+
+def crearPost(request):
+    context = {
+        "titulo": "Escriba su post"
+    }
+    return render(request, "blog/crearPost.html", context)

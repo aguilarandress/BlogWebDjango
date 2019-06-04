@@ -1,0 +1,15 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+<h2>{{titulo}}</h2>
+<form action="{% url 'blog:index' %}" method="post">{% csrf_token %}
+    <div class="form-group">
+        <input type="text" class="form-control" name="titulo" placeholder="Titulo del post">
+    </div>
+    <div class="form-group">
+        <label for="exampleFormControlTextarea1">Escriba su post abajo</label>
+        <textarea class="form-control" id="contenidoPost" name="contenidoPost" rows="8"></textarea>
+    </div>
+    <input type="submit" value="Postear!" class="btn btn-block btn-primary my-3">
+</form>
+{% endblock %}
