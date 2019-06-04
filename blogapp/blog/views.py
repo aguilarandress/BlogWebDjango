@@ -96,16 +96,17 @@ def iniciarSesion(request):
             for mensaje in validarDatosInicioSesion(usuario)["mensajes"]:
                 messages.error(request, mensaje)
             return render(request, "blog/iniciarSesion.html", usuario)
-
-        # nombreDeUsuario = request.POST["nombre"]
-        # contraseña = request.POST["contraseña"]
-        # usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
-        # if usuario is not None:
-        #     login(request, usuario)
-        #     messages.success(request, "Ha iniciado sesión correctamente")
-        #     return HttpResponseRedirect(reverse("blog:index"))
-        # else:
-        #     return HttpResponseRedirect(reverse("blog:iniciarSesion"))
+        # Autorizar al usuario
+        usuario = authenticate(
+            request, username=usuario["nombre"], password=usuario["contraseña"])
+        if not usuario:
+            messages.error(
+                request, "Nombre de usuario o contraseña incorrectos")
+            return render(request, "blog/iniciarSesion.html")
+        else:
+            login(request, usuario)
+            messages.success(request, "Ha iniciado sesión correctamente")
+            return HttpResponseRedirect(reverse("blog:index"))
     else:
         return render(request, "blog/iniciarSesion.html")
 
