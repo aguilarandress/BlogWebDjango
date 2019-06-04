@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .helpers import validarDatosDeRegistro
+from .helpers import validarDatosDeRegistro, validarDatosInicioSesion
 
 
 def index(request):
@@ -19,7 +19,7 @@ def index(request):
     """
     if request.method == "POST":
         tituloPost = request.POST["titulo"]
-        contenidoPosr= request.POST["contenidoPost"]
+        contenidoPosr = request.POST["contenidoPost"]
         return HttpResponseRedirect(reverse("blog:index"))
     else:
         context = {
@@ -66,7 +66,8 @@ def registrarNuevoUsuario(request):
             return render(request, "blog/registrar.html", usuario)
 
         # Registrar usuario
-        usuarioNuevo = User.objects.create_user(usuario["nombre"], usuario["email"], usuario["contraseña"])
+        usuarioNuevo = User.objects.create_user(
+            usuario["nombre"], usuario["email"], usuario["contraseña"])
         usuarioNuevo.save()
         messages.success(request, "Usuario registrado")
         return HttpResponseRedirect(reverse("blog:iniciarSesion"))
@@ -87,15 +88,24 @@ def iniciarSesion(request):
         registra con éxito
     """
     if request.method == "POST":
-        nombreDeUsuario = request.POST["nombre"]
-        contraseña = request.POST["contraseña"]
-        usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
-        if usuario is not None:
-            login(request, usuario)
-            messages.success(request, "Ha iniciado sesión correctamente")
-            return HttpResponseRedirect(reverse("blog:index"))
-        else:
-            return HttpResponseRedirect(reverse("blog:iniciarSesion"))
+        # Obtener datos del formulario
+        usuario = {"nombre": request.POST["nombre"],
+                   "contraseña": request.POST["contraseña"]}
+        # Validar datos del formulario
+        if not validarDatosInicioSesion(usuario)["esValido"]:
+            for mensaje in validarDatosInicioSesion(usuario)["mensajes"]:
+                messages.error(request, mensaje)
+            return render(request, "blog/iniciarSesion.html", usuario)
+
+        # nombreDeUsuario = request.POST["nombre"]
+        # contraseña = request.POST["contraseña"]
+        # usuario = authenticate(request, username=nombreDeUsuario, password=contraseña)
+        # if usuario is not None:
+        #     login(request, usuario)
+        #     messages.success(request, "Ha iniciado sesión correctamente")
+        #     return HttpResponseRedirect(reverse("blog:index"))
+        # else:
+        #     return HttpResponseRedirect(reverse("blog:iniciarSesion"))
     else:
         return render(request, "blog/iniciarSesion.html")
 

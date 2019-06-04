@@ -13,18 +13,22 @@ def validarDatosDeRegistro(usuario):
         Retorna un diccionario que contiene si los datos están válidos
         y los mensajes de error
     Proceso:
-        1. Se crea una variable resultado
-        2. Se revisa si los están completos
+        1. Se crea una variable resultado que contiene los 
+        resultados de la validación
+        2. Con un ciclo se revisa si algún dato está vacío
         3. Se revisa el formato del correo
         4. Se comparan las contraseñas
-        5. Se retorna el resultado
+        5. Se revisa si hay mensajes de errores, si es así
+        esValido = False
+        6. Se retorna el resultado
     """
     resultado = {"esValido": True, "mensajes": []}
     # Revisar que los datos estén completos
     for dato in usuario:
         if not usuario[dato]:
             resultado["esValido"] = False
-            resultado["mensajes"].append("Por favor complete el formulario completamente")
+            resultado["mensajes"].append(
+                "Por favor complete todo el formulario")
             return resultado
 
     # Revisar el formato del correo
@@ -58,3 +62,32 @@ def validarCorreos(stringEntrada):
     if patron.search(stringEntrada):
         return True
     return False
+
+
+# Validar datos de formulario para inicio de sesión
+def validarDatosInicioSesion(usuario):
+    """Valida los datos del formulario de inicio de sesión
+
+    Entradas:
+        usuario: Es un diccionario
+    Precondiciones:
+        usuario contiene los datos del formulario de 
+        inicio de sesión
+    Salidas:
+        Retorna un diccionario con los datos de la validación
+    Proceso:
+        1. Se crea una variable resultado que contiene los 
+        resultados de la validación
+        2. Con un ciclo se revisa si algún dato está vacío
+        3. Se revisa si hay mensajes de errores, si es así
+        esValido = False
+        4. Se retorna el resultado
+    """
+    resultado = {"esValido": True, "mensajes": []}
+    for dato in usuario:
+        if not usuario[dato]:
+            resultado["mensajes"].append(
+                "Por favor complete todo el formulario")
+            resultado["esValido"] = False
+            return resultado
+    return resultado
