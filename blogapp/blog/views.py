@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from .helpers import validarDatosDeRegistro
 
 
 def index(request):
@@ -40,10 +41,32 @@ def registrarNuevoUsuario(request):
         registra con éxito
     """
     if request.method == "POST":
-        nombreDeUsuario = request.POST["nombre"]
-        email = request.POST["email"]
-        contraseña = request.POST["contraseña"]
-        usuarioNuevo = User.objects.create_user(nombreDeUsuario, email, contraseña)
+        # Obtener datos del formulario
+        usuario = {
+            "nombre": request.POST["nombre"],
+            "email": request.POST["email"],
+            "contraseña": request.POST["contraseña"],
+            "contraseña2": request.POST["contraseña2"]
+        }
+
+        # Validar datos del formulario
+        if not validarDatosDeRegistro(usuario)["esValido"]:
+            for mensaje in validarDatosDeRegistro(usuario)["mensajes"]:
+                messages.error(request, mensaje)
+            return render(request, "blog/registrar.html", usuario)
+
+        # Revisar si existe un usuario con el nombre
+        if User.objects.filter(username=usuario["nombre"]).exists():
+            messages.error(request, "El nombre de usuario ya existe")
+            return render(request, "blog/registrar.html", usuario)
+
+        # Revisar si existe un usuario con el nombre
+        if User.objects.filter(email=usuario["email"]).exists():
+            messages.error(request, "El correo utilizado ya existe")
+            return render(request, "blog/registrar.html", usuario)
+
+        # Registrar usuario
+        usuarioNuevo = User.objects.create_user(usuario["nombre"], usuario["email"], usuario["contraseña"])
         usuarioNuevo.save()
         messages.success(request, "Usuario registrado")
         return HttpResponseRedirect(reverse("blog:iniciarSesion"))
