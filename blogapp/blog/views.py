@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .helpers import validarDatosDeRegistro, validarDatosInicioSesion
-
+from .models import BlogPost
 
 def index(request):
     """Carga la página index del blog
@@ -126,7 +126,12 @@ def cerrarSesion(request):
 
 @login_required(login_url='/iniciarSesion/')
 def crearPost(request):
-    context = {
-        "titulo": "Escriba su post"
-    }
-    return render(request, "blog/crearPost.html", context)
+    if request.method == "POST":
+        form = BlogPost()
+        form.save()
+        return HttpResponseRedirect(reverse("blog:index"))
+    else:
+        context = {
+            "titulo": "Escriba su post"
+        }
+        return render(request, "blog/crearPost.html", context)
