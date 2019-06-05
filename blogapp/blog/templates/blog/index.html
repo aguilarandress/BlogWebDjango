@@ -1,6 +1,18 @@
 {% extends 'blog/layout.html' %}
 
 {% block content %}
-<h2>{{titulo}}</h2>
-<a href="{% url 'blog:crearPost' %}" class="btn-link">¿Desea hacer un post? Click Aqui</a>
+<h2>Úlimos posts publicados</h2>
+{% if posts %}
+    {% for post in posts %}
+    <div class="card card-body my-4">
+        <h3>{{ post.titulo }}</h3>
+        <p>{{ post.contenido }}</p>
+        <a href="#" class="btn btn-dark btn-block">Detalles</a>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-primary">
+        NO hay posts publicados...
+    </div>
+{% endif %}
 {% endblock %}

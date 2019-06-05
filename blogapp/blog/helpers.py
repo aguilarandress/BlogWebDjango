@@ -91,3 +91,23 @@ def validarDatosInicioSesion(usuario):
             resultado["esValido"] = False
             return resultado
     return resultado
+
+
+# Truncar contenido del post
+def truncarContenido(posts):
+    """Trunca el contenido del post
+
+    Entradas:
+        posts: es una lista
+    Precondiciones:
+        Todos los elementos son objetos de un post
+    Salidas:
+        NO retorna nada
+    Proceso:
+        1. Con un ciclo for se itera sobre los posts
+        2. Se revisa si el contenido es mayor que 150
+        3. Se obtienen los primeros 150 caracteres del contenido
+    """
+    for post in posts:
+        if len(post.contenido) > 150:
+            post.contenido = post.contenido[:150] + "..."

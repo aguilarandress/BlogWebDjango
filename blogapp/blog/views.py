@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .helpers import validarDatosDeRegistro, validarDatosInicioSesion
+from .helpers import validarDatosDeRegistro, validarDatosInicioSesion, truncarContenido
 from .models import BlogPost
 
 
@@ -19,15 +19,13 @@ def index(request):
     Salidas:
         Retorna una respuesta al usuario
     """
-    if request.method == "POST":
-        tituloPost = request.POST["titulo"]
-        contenidoPosr = request.POST["contenidoPost"]
-        return HttpResponseRedirect(reverse("blog:index"))
-    else:
-        context = {
-            "titulo": "Últimos posts publicados"
-        }
-        return render(request, "blog/index.html", context)
+    # Obtener los 10 blog posts más recientes
+    posts = BlogPost.objects.order_by("-fechaDelPost")[:10]
+    truncarContenido(posts)
+    context = {
+        "posts": posts
+    }
+    return render(request, "blog/index.html", context)
 
 
 def registrarNuevoUsuario(request):
@@ -126,18 +124,14 @@ def cerrarSesion(request):
 
 
 @login_required(login_url='/iniciarSesion/')
-
-
 def crearPost(request):
     if request.method == "POST":
         usuario = request.user
         titulo = request.POST["titulo"]
         contenido = request.POST["contenido"]
-        form = BlogPost(titulo=titulo, contenido=contenido, usuario=usuario)
-        form.save()
+        post = BlogPost(titulo=titulo, contenido=contenido, usuario=usuario)
+        post.save()
+        messages.success(request, "Blog Post creado con éxito")
         return HttpResponseRedirect(reverse("blog:index"))
     else:
-        context = {
-            "titulo": "Escriba su post"
-        }
-        return render(request, "blog/crearPost.html", context)
+        return render(request, "blog/crearPost.html")
