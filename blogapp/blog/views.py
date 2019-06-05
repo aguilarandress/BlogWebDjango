@@ -8,6 +8,7 @@ from django.contrib import messages
 from .helpers import validarDatosDeRegistro, validarDatosInicioSesion
 from .models import BlogPost
 
+
 def index(request):
     """Carga la página index del blog
 
@@ -125,11 +126,14 @@ def cerrarSesion(request):
 
 
 @login_required(login_url='/iniciarSesion/')
+
+
 def crearPost(request):
     if request.method == "POST":
+        usuario = request.user
         titulo = request.POST["titulo"]
         contenido = request.POST["contenido"]
-        form = BlogPost(titulo=titulo, contenido=contenido)
+        form = BlogPost(titulo=titulo, contenido=contenido, usuario=usuario)
         form.save()
         return HttpResponseRedirect(reverse("blog:index"))
     else:
