@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -26,6 +26,12 @@ def index(request):
         "posts": posts
     }
     return render(request, "blog/index.html", context)
+
+
+def detallesPost(request, id):
+    post = get_object_or_404(BlogPost, pk=id)
+    context = {"post": post}
+    return render(request, "blog/detallesPost.html", context)
 
 
 def registrarNuevoUsuario(request):
@@ -135,3 +141,8 @@ def crearPost(request):
         return HttpResponseRedirect(reverse("blog:index"))
     else:
         return render(request, "blog/crearPost.html")
+
+
+# TODO: Agregar funcionalidad de comentarios
+
+# TODO: Agregar funcionalidad de like-dislike
