@@ -9,5 +9,6 @@ urlpatterns = [
     path("iniciarSesion/", views.iniciarSesion, name="iniciarSesion"),
     path("cerrarSesion/", views.cerrarSesion, name="cerrarSesion"),
     path("crearPost/", views.crearPost, name="crearPost"),
+    path("/<int:id>/", views.agregarComentario, name="agregarComentario"),
     path("post/<int:id>/", views.detallesPost, name="detallesPost")
 ]

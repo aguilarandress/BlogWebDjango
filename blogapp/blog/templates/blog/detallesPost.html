@@ -17,9 +17,9 @@
                 <a href="#" class="btn btn-success">Like {{ post.num_likes }}</a>
                 <a href="#" class="btn btn-danger">Dislike {{ post.num_dislikes }}</a>
             </div>
-            <form method="POST">
+            <form action="{% url 'blog:agregarComentario' post.id %}" method="post">
                 <div class="form-group">
-                    <label for="texto">Ingrese su comentario:</label>
+                    <label for="texto">Ingrese su comentario:</label>{% csrf_token %}
                     <textarea name="texto" id="texto" class="form-control"></textarea>
                     <input type="submit" value="Comentar" class="btn btn-secondary btn-block mt-3">
                 </div>

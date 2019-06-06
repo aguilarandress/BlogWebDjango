@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .helpers import validarDatosDeRegistro, validarDatosInicioSesion, truncarContenido
-from .models import BlogPost
+from .models import BlogPost, Comentario_Blog
 
 
 def index(request):
@@ -29,9 +29,9 @@ def index(request):
 
 
 def detallesPost(request, id):
-    post = get_object_or_404(BlogPost, pk=id)
-    context = {"post": post}
-    return render(request, "blog/detallesPost.html", context)
+        post = get_object_or_404(BlogPost, pk=id)
+        context = {"post": post}
+        return render(request, "blog/detallesPost.html", context)
 
 
 def registrarNuevoUsuario(request):
@@ -143,6 +143,21 @@ def crearPost(request):
         return render(request, "blog/crearPost.html")
 
 
-# TODO: Agregar funcionalidad de comentarios
+def agregarComentario(request, id):
+
+    postId = BlogPost.objects.get(id=id)
+    usuario = request.user
+    contenido = request.POST["texto"]
+    if contenido != "":
+        comentario = Comentario_Blog(contenido=contenido, usuario=usuario, postId=postId)
+        comentario.save()
+        messages.success(request, "Comentario creado con éxito")
+        return HttpResponseRedirect(reverse("blog:index"))
+    else:
+        messages.error(request, "Comentario vacío")
+        post = get_object_or_404(BlogPost, pk=id)
+        context = {"post": post}
+        return render(request, "blog/detallesPost.html", context)
+
 
 # TODO: Agregar funcionalidad de like-dislike
