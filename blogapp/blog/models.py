@@ -23,3 +23,12 @@ class ComentarioBlog(models.Model):
 
     def __str__(self):
         return self.contenido
+
+
+class Estadisticas(models.Model):
+    num_visitas = models.IntegerField(default=0)
+    num_comentarios = models.IntegerField(default=0)
+    porcentajeLikes= models.FloatField(default=0.0)
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+
+

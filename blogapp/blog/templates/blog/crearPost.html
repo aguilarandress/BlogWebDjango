@@ -9,7 +9,9 @@
     <div class="form-group">
         <label>Escriba su post abajo</label>
         <textarea class="form-control" name="contenido" placeholder="Contenido..." rows="8"></textarea>
+        <input type='hidden' value='{{ post.id }}' name='postId'>
     </div>
+
     <input type="submit" value="Postear!" class="btn btn-block btn-success my-3">
 </form>
 {% endblock %}

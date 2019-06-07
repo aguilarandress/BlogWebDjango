@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .helpers import validarDatosDeRegistro, validarDatosInicioSesion, truncarContenido
-from .models import BlogPost, ComentarioBlog
+from .models import BlogPost, ComentarioBlog, Estadisticas
 
 
 def index(request):
@@ -29,6 +29,9 @@ def index(request):
 def detallesPost(request, id):
     post = get_object_or_404(BlogPost, pk=id)
     comentarios = ComentarioBlog.objects.filter(post=post)
+    blog_estadisticas = Estadisticas.objects.get(post=id)
+    blog_estadisticas.num_visitas += 1
+    blog_estadisticas.save()
     context = {"post": post, "comentarios": comentarios}
     return render(request, "blog/detallesPost.html", context)
 
@@ -135,6 +138,9 @@ def crearPost(request):
         contenido = request.POST["contenido"]
         post = BlogPost(titulo=titulo, contenido=contenido, usuario=usuario)
         post.save()
+        postId = BlogPost.objects.get(pk=post.id)
+        blog_estadisticas = Estadisticas(post=postId)
+        blog_estadisticas.save()
         messages.success(request, "Blog Post creado con éxito")
         return HttpResponseRedirect(reverse("blog:index"))
     else:
@@ -149,6 +155,9 @@ def agregarComentario(request, id):
     if contenido != "":
         comentario = ComentarioBlog(contenido=contenido, usuario=usuario, post=post)
         comentario.save()
+        blog_estadisticas = Estadisticas.objects.get(post=id)
+        blog_estadisticas.num_comentarios += 1
+        blog_estadisticas.save()
         messages.success(request, "Comentario creado con éxito")
     else:
         messages.error(request, "Comentario vacío")
@@ -158,8 +167,12 @@ def agregarComentario(request, id):
 # TODO: Agregar funcionalidad de like-dislike
 @login_required(login_url='/iniciarSesion/')
 def likePost(request, id):
+
     post = BlogPost.objects.get(pk=id)
     post.numLikes += 1
+    blog_estadisticas = Estadisticas.objects.get(post=id)
+    blog_estadisticas.porcentajeLikes = post.numLikes / blog_estadisticas.num_visitas
+    blog_estadisticas.save()
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
 
