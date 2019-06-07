@@ -14,12 +14,13 @@
     <div class="card-body">
         {% if user.is_authenticated %}
             <div class="btn-group mb-4" role="group">
-                <a href="#" class="btn btn-success">Like {{ post.num_likes }}</a>
-                <a href="#" class="btn btn-danger">Dislike {{ post.num_dislikes }}</a>
+                <a href="{% url 'blog:likePost' post.id %}" class="btn btn-success">Like {{ post.numLikes }}</a>
+                <a href="{% url 'blog:dislikePost' post.id %}" class="btn btn-danger">Dislike {{ post.numDislikes }}</a>
             </div>
             <form action="{% url 'blog:agregarComentario' post.id %}" method="post">
+                {% csrf_token %}
                 <div class="form-group">
-                    <label for="texto">Ingrese su comentario:</label>{% csrf_token %}
+                    <label for="texto">Ingrese su comentario:</label>
                     <textarea name="texto" id="texto" class="form-control"></textarea>
                     <input type="submit" value="Comentar" class="btn btn-secondary btn-block mt-3">
                 </div>
@@ -27,6 +28,18 @@
         {% else %}
             <a href="{% url 'blog:iniciarSesion' %}" class="btn-link">Inicie sesión para interactuar...</a>
         {% endif %}
+    </div>
+</div>
+<div class="card mb-4">
+    <h5 class="card-header">Comentarios</h5>
+    <div class="card-body">
+        {% for comentario in comentarios %}
+            <div>
+                <p><strong>Usuario:</strong> {{ comentario.usuario.username }}</p>
+                <p>{{ comentario.contenido }}</p>
+                <hr>
+            </div>
+        {% endfor %}
     </div>
 </div>
 <!-- Agregar comenaterios -->

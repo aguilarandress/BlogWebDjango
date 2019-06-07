@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .helpers import validarDatosDeRegistro, validarDatosInicioSesion, truncarContenido
-from .models import BlogPost, Comentario_Blog
+from .models import BlogPost, ComentarioBlog
 
 
 def index(request):
@@ -22,16 +22,15 @@ def index(request):
     # Obtener los 10 blog posts más recientes
     posts = BlogPost.objects.order_by("-fechaDelPost")[:10]
     truncarContenido(posts)
-    context = {
-        "posts": posts
-    }
+    context = {"posts": posts}
     return render(request, "blog/index.html", context)
 
 
 def detallesPost(request, id):
-        post = get_object_or_404(BlogPost, pk=id)
-        context = {"post": post}
-        return render(request, "blog/detallesPost.html", context)
+    post = get_object_or_404(BlogPost, pk=id)
+    comentarios = ComentarioBlog.objects.filter(post=post)
+    context = {"post": post, "comentarios": comentarios}
+    return render(request, "blog/detallesPost.html", context)
 
 
 def registrarNuevoUsuario(request):
@@ -101,16 +100,14 @@ def iniciarSesion(request):
     else:
         if request.method == "POST":
             # Obtener datos del formulario
-            usuario = {"nombre": request.POST["nombre"],
-                       "contraseña": request.POST["contraseña"]}
+            usuario = {"nombre": request.POST["nombre"], "contraseña": request.POST["contraseña"]}
             # Validar datos del formulario
             if not validarDatosInicioSesion(usuario)["esValido"]:
                 for mensaje in validarDatosInicioSesion(usuario)["mensajes"]:
                     messages.error(request, mensaje)
                 return render(request, "blog/iniciarSesion.html", usuario)
             # Autorizar al usuario
-            usuario = authenticate(
-                request, username=usuario["nombre"], password=usuario["contraseña"])
+            usuario = authenticate(request, username=usuario["nombre"], password=usuario["contraseña"])
             if not usuario:
                 messages.error(
                     request, "Nombre de usuario o contraseña incorrectos")
@@ -123,6 +120,7 @@ def iniciarSesion(request):
             return render(request, "blog/iniciarSesion.html")
 
 
+@login_required(login_url='/iniciarSesion/')
 def cerrarSesion(request):
     logout(request)
     messages.success(request, "Ha cerrado su sesión correctamente")
@@ -143,21 +141,32 @@ def crearPost(request):
         return render(request, "blog/crearPost.html")
 
 
+@login_required(login_url='/iniciarSesion/')
 def agregarComentario(request, id):
-
-    postId = BlogPost.objects.get(id=id)
+    post = BlogPost.objects.get(id=id)
     usuario = request.user
     contenido = request.POST["texto"]
     if contenido != "":
-        comentario = Comentario_Blog(contenido=contenido, usuario=usuario, postId=postId)
+        comentario = ComentarioBlog(contenido=contenido, usuario=usuario, post=post)
         comentario.save()
         messages.success(request, "Comentario creado con éxito")
-        return HttpResponseRedirect(reverse("blog:index"))
     else:
         messages.error(request, "Comentario vacío")
-        post = get_object_or_404(BlogPost, pk=id)
-        context = {"post": post}
-        return render(request, "blog/detallesPost.html", context)
+    return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
 
 
 # TODO: Agregar funcionalidad de like-dislike
+@login_required(login_url='/iniciarSesion/')
+def likePost(request, id):
+    post = BlogPost.objects.get(pk=id)
+    post.numLikes += 1
+    post.save()
+    return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
+
+
+@login_required(login_url='/iniciarSesion/')
+def dislikePost(request, id):
+    post = BlogPost.objects.get(pk=id)
+    post.numDislikes += 1
+    post.save()
+    return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
