@@ -164,14 +164,14 @@ def agregarComentario(request, id):
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
 
 
-# TODO: Agregar funcionalidad de like-dislike
+
 @login_required(login_url='/iniciarSesion/')
 def likePost(request, id):
 
     post = BlogPost.objects.get(pk=id)
     post.numLikes += 1
     blog_estadisticas = Estadisticas.objects.get(post=id)
-    blog_estadisticas.porcentajeLikes = post.numLikes / blog_estadisticas.num_visitas
+    blog_estadisticas.porcentajeLikes = (post.numLikes / blog_estadisticas.num_visitas) * 100
     blog_estadisticas.save()
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
