@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .helpers import validarDatosDeRegistro, validarDatosInicioSesion, truncarContenido
+from .helpers import validarDatosDeRegistro, validarContenido, truncarContenido
 from .models import BlogPost, ComentarioBlog, Estadisticas
 
 
@@ -105,8 +105,8 @@ def iniciarSesion(request):
             # Obtener datos del formulario
             usuario = {"nombre": request.POST["nombre"], "contraseña": request.POST["contraseña"]}
             # Validar datos del formulario
-            if not validarDatosInicioSesion(usuario)["esValido"]:
-                for mensaje in validarDatosInicioSesion(usuario)["mensajes"]:
+            if not validarContenido(usuario)["esValido"]:
+                for mensaje in validarContenido(usuario)["mensajes"]:
                     messages.error(request, mensaje)
                 return render(request, "blog/iniciarSesion.html", usuario)
             # Autorizar al usuario
@@ -133,13 +133,18 @@ def cerrarSesion(request):
 @login_required(login_url='/iniciarSesion/')
 def crearPost(request):
     if request.method == "POST":
+        post = {"titulo": request.POST["titulo"], "contenido": request.POST["contenido"]}
+        # Validar datos del formulario
+        if not validarContenido(post)["esValido"]:
+            for mensaje in validarContenido(post)["mensajes"]:
+                messages.error(request, mensaje)
+            return render(request, "blog/crearPost.html", post)
         usuario = request.user
-        titulo = request.POST["titulo"]
-        contenido = request.POST["contenido"]
-        post = BlogPost(titulo=titulo, contenido=contenido, usuario=usuario)
+        # Crear y guardar post
+        post = BlogPost(titulo=post["titulo"], contenido=post["contenido"], usuario=usuario)
         post.save()
-        postId = BlogPost.objects.get(pk=post.id)
-        blog_estadisticas = Estadisticas(post=postId)
+        # Crear estadísticas
+        blog_estadisticas = Estadisticas(post=post)
         blog_estadisticas.save()
         messages.success(request, "Blog Post creado con éxito")
         return HttpResponseRedirect(reverse("blog:index"))
@@ -164,10 +169,8 @@ def agregarComentario(request, id):
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
 
 
-
 @login_required(login_url='/iniciarSesion/')
 def likePost(request, id):
-
     post = BlogPost.objects.get(pk=id)
     post.numLikes += 1
     blog_estadisticas = Estadisticas.objects.get(post=id)

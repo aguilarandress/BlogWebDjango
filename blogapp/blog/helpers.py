@@ -65,14 +65,13 @@ def validarCorreos(stringEntrada):
 
 
 # Validar datos de formulario para inicio de sesión
-def validarDatosInicioSesion(usuario):
-    """Valida los datos del formulario de inicio de sesión
+def validarContenido(infoFormulario):
+    """Valida los datos de un formulario
 
     Entradas:
-        usuario: Es un diccionario
+        infoFormulario: Es un diccionario
     Precondiciones:
-        usuario contiene los datos del formulario de 
-        inicio de sesión
+        infoFormulario contiene los datos del formulario
     Salidas:
         Retorna un diccionario con los datos de la validación
     Proceso:
@@ -84,10 +83,9 @@ def validarDatosInicioSesion(usuario):
         4. Se retorna el resultado
     """
     resultado = {"esValido": True, "mensajes": []}
-    for dato in usuario:
-        if not usuario[dato]:
-            resultado["mensajes"].append(
-                "Por favor complete todo el formulario")
+    for dato in infoFormulario:
+        if not infoFormulario[dato]:
+            resultado["mensajes"].append("Por favor complete todo el formulario")
             resultado["esValido"] = False
             return resultado
     return resultado
