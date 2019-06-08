@@ -1,0 +1,20 @@
+{% extends 'blog/layout.html' %}
+
+{% block content %}
+<div class="card">
+    <h5 class="card-header">Blogs Posteados</h5>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for estadisticasPost in estadisticasPosts %}
+                <li class="list-group-item">
+                    <h5>{{ estadisticasPost.post.titulo }}</h5>
+                    <p><strong>Comentarios: </strong> {{ estadisticasPost.num_comentarios }}</p>
+                    <p><strong>Porcentaje Likes: </strong> {{ estadisticasPost.porcentajeLikes }}</p> 
+                    <p><strong>Visitas: </strong> {{ estadisticasPost.num_visitas }}</p>         
+                    <a href="{% url 'blog:detallesPost' estadisticasPost.post.id %}" class="btn btn-secondary btn-block">Ir al blog</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

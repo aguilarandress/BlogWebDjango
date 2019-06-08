@@ -186,3 +186,17 @@ def dislikePost(request, id):
     post.numDislikes += 1
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
+
+
+def cuenta(request):
+    usuario = request.user
+    postsDelUsuario = BlogPost.objects.filter(usuario=usuario)
+
+    estadisticasPosts = []
+    for post in postsDelUsuario:
+        estadisticas = Estadisticas.objects.get(post=post)
+        estadisticasPosts.append(estadisticas)
+        
+    context = {"estadisticasPosts": estadisticasPosts}
+    return render(request, "blog/cuenta.html", context)
+
