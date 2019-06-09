@@ -27,8 +27,7 @@ def validarDatosDeRegistro(usuario):
     for dato in usuario:
         if not usuario[dato]:
             resultado["esValido"] = False
-            resultado["mensajes"].append(
-                "Por favor complete todo el formulario")
+            resultado["mensajes"].append("Por favor complete todos los campos")
             return resultado
 
     # Revisar el formato del correo

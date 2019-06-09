@@ -33,13 +33,14 @@
 <div class="card mb-4">
     <h5 class="card-header">Comentarios</h5>
     <div class="card-body">
+        <ul class="list-group list-group-flush">
         {% for comentario in comentarios %}
-            <div>
+            <li class="list-group-item">
                 <p><strong>Usuario:</strong> {{ comentario.usuario.username }}</p>
                 <p>{{ comentario.contenido }}</p>
-                <hr>
-            </div>
+            </li>
         {% endfor %}
+        </ul>
     </div>
 </div>
 <!-- Agregar comenaterios -->
