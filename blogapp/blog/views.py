@@ -108,8 +108,7 @@ def registrarNuevoUsuario(request):
                 return render(request, "blog/registrar.html", usuario)
 
             # Registrar usuario
-            usuarioNuevo = User.objects.create_user(
-                usuario["nombre"], usuario["email"], usuario["contraseña"])
+            usuarioNuevo = User.objects.create_user(usuario["nombre"], usuario["email"], usuario["contraseña"])
             usuarioNuevo.save()
             messages.success(request, "Usuario registrado")
             return HttpResponseRedirect(reverse("blog:iniciarSesion"))
@@ -144,8 +143,7 @@ def iniciarSesion(request):
     else:
         if request.method == "POST":
             # Obtener datos del formulario
-            usuario = {"nombre": request.POST["nombre"],
-                       "contraseña": request.POST["contraseña"]}
+            usuario = {"nombre": request.POST["nombre"], "contraseña": request.POST["contraseña"]}
             # Validar datos del formulario
             if not validarContenido(usuario)["esValido"]:
                 for mensaje in validarContenido(usuario)["mensajes"]:
@@ -153,11 +151,9 @@ def iniciarSesion(request):
                 return render(request, "blog/iniciarSesion.html", usuario)
 
             # Autorizar al usuario
-            usuario = authenticate(
-                request, username=usuario["nombre"], password=usuario["contraseña"])
+            usuario = authenticate(request, username=usuario["nombre"], password=usuario["contraseña"])
             if not usuario:
-                messages.error(
-                    request, "Nombre de usuario o contraseña incorrectos")
+                messages.error(request, "Nombre de usuario o contraseña incorrectos")
                 return render(request, "blog/iniciarSesion.html")
             else:
                 login(request, usuario)
@@ -206,8 +202,7 @@ def crearPost(request):
         5. Se redirige al usuario a la página index
     """
     if request.method == "POST":
-        post = {"titulo": request.POST["titulo"],
-                "contenido": request.POST["contenido"]}
+        post = {"titulo": request.POST["titulo"], "contenido": request.POST["contenido"]}
         # Validar datos del formulario
         if not validarContenido(post)["esValido"]:
             for mensaje in validarContenido(post)["mensajes"]:
@@ -215,8 +210,7 @@ def crearPost(request):
             return render(request, "blog/crearPost.html", post)
         usuario = request.user
         # Crear y guardar post
-        post = BlogPost(titulo=post["titulo"],
-                        contenido=post["contenido"], usuario=usuario)
+        post = BlogPost(titulo=post["titulo"], contenido=post["contenido"], usuario=usuario)
         post.save()
         send_mail(
             "Blog creado",
@@ -258,8 +252,7 @@ def agregarComentario(request, id):
     contenido = request.POST["texto"]
 
     if contenido != "":
-        comentario = ComentarioBlog(
-            contenido=contenido, usuario=usuario, post=post)
+        comentario = ComentarioBlog(contenido=contenido, usuario=usuario, post=post)
         comentario.save()
 
         blogEstadisticas = Estadisticas.objects.get(post=id)
@@ -293,8 +286,7 @@ def likePost(request, id):
     post = BlogPost.objects.get(pk=id)
     post.numLikes += 1
     blogEstadisticas = Estadisticas.objects.get(post=post)
-    blogEstadisticas.porcentajeLikes = (
-        post.numLikes * 100) / (post.numLikes + post.numDislikes)
+    blogEstadisticas.porcentajeLikes = (post.numLikes * 100) / (post.numLikes + post.numDislikes)
     blogEstadisticas.save()
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
@@ -321,8 +313,7 @@ def dislikePost(request, id):
     post = BlogPost.objects.get(pk=id)
     post.numDislikes += 1
     blogEstadisticas = Estadisticas.objects.get(post=post)
-    blogEstadisticas.porcentajeLikes = (
-        post.numLikes * 100) / (post.numLikes + post.numDislikes)
+    blogEstadisticas.porcentajeLikes = (post.numLikes * 100) / (post.numLikes + post.numDislikes)
     blogEstadisticas.save()
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
