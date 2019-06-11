@@ -3,16 +3,16 @@
 {% block content %}
 <h2>Úlimos posts publicados</h2>
 {% if posts %}
-    {% for post in posts %}
-    <div class="card card-body my-4">
-        <h3>{{ post.titulo }}</h3>
-        <p>{{ post.contenido }}</p>
-        <a href="{% url 'blog:detallesPost' post.id %}" class="btn btn-dark btn-block">Detalles</a>
-    </div>
-    {% endfor %}
+{% for post in posts %}
+<div class="card card-body my-4">
+    <h3>{{ post.titulo }}</h3>
+    <p>{{ post.contenido }}</p>
+    <a href="{% url 'blog:detallesPost' post.id %}" class="btn btn-dark btn-block">Detalles</a>
+</div>
+{% endfor %}
 {% else %}
-    <div class="alert alert-primary">
-        NO hay posts publicados...
-    </div>
+<div class="alert alert-primary">
+    NO hay posts publicados...
+</div>
 {% endif %}
 {% endblock %}

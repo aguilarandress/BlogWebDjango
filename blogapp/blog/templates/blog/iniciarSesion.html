@@ -2,7 +2,8 @@
 
 {% block content %}
 <h2 class="mb-3">Iniciar Sesión</h2>
-<form action="{% url 'blog:iniciarSesion' %}" method="post">{% csrf_token %}
+<form action="{% url 'blog:iniciarSesion' %}" method="post">
+    {% csrf_token %}
     <div class="form-group">
         <input type="text" class="form-control" name="nombre" placeholder="Nombre de usuario...">
     </div>

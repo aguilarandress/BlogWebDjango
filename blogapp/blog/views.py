@@ -37,12 +37,11 @@ def detallesPost(request, id):
 
     Entradas:
         request: es un objeto de petición Http
-        id: es un id de un post
+        id: es una hilera
     Precondiciones:
         No hay
     Salidas:
-        Retorna un render() con el template de 
-        detallesPost
+        Retorna un render() con el template de detallesPost
     Proceso:
         1. Obtiene el post con el id
         2. Obtiene los comentarios del post respectivo
@@ -119,7 +118,7 @@ def registrarNuevoUsuario(request):
 
 
 def iniciarSesion(request):
-    """Registra un usuario nuevo
+    """Inicia la sesión de un usuario
 
     Entradas:
         request: es un objeto de petición Http
@@ -135,9 +134,9 @@ def iniciarSesion(request):
         2. Dependiendo del tipo de request, se carga el template
         o se carga procesa el formulario
         3. Se valida el contenido del formulario de inicio de sesión
-        4. Con la función authenticate() y con condicional se autoriza
+        4. Con la función authenticate() y con un condicional se autoriza
         al usuario hacer login
-        5. Con la función login se inicia sesión y se redirige a la
+        5. Con la función login() se inicia sesión y se redirige a la
         página de inicio
     """
     if request.user.is_authenticated:
@@ -145,7 +144,8 @@ def iniciarSesion(request):
     else:
         if request.method == "POST":
             # Obtener datos del formulario
-            usuario = {"nombre": request.POST["nombre"], "contraseña": request.POST["contraseña"]}
+            usuario = {"nombre": request.POST["nombre"],
+                       "contraseña": request.POST["contraseña"]}
             # Validar datos del formulario
             if not validarContenido(usuario)["esValido"]:
                 for mensaje in validarContenido(usuario)["mensajes"]:
@@ -153,9 +153,11 @@ def iniciarSesion(request):
                 return render(request, "blog/iniciarSesion.html", usuario)
 
             # Autorizar al usuario
-            usuario = authenticate(request, username=usuario["nombre"], password=usuario["contraseña"])
+            usuario = authenticate(
+                request, username=usuario["nombre"], password=usuario["contraseña"])
             if not usuario:
-                messages.error(request, "Nombre de usuario o contraseña incorrectos")
+                messages.error(
+                    request, "Nombre de usuario o contraseña incorrectos")
                 return render(request, "blog/iniciarSesion.html")
             else:
                 login(request, usuario)
@@ -165,7 +167,7 @@ def iniciarSesion(request):
             return render(request, "blog/iniciarSesion.html")
 
 
-@login_required(login_url='/iniciarSesion/')
+@login_required(login_url="/iniciarSesion/")
 def cerrarSesion(request):
     """Cierra la sesión de un usuario
 
@@ -176,8 +178,7 @@ def cerrarSesion(request):
     Salidas:
         Retorna un  HttpResponseRedirect
     Proceso:
-        1. Con la función logout() se cierra la sesión
-        del usuario
+        1. Con la función logout() se cierra la sesión del usuario
         2. Se redirige a la página de iniciar sesión
     """
     logout(request)
@@ -185,7 +186,7 @@ def cerrarSesion(request):
     return HttpResponseRedirect(reverse("blog:iniciarSesion"))
 
 
-@login_required(login_url='/iniciarSesion/')
+@login_required(login_url="/iniciarSesion/")
 def crearPost(request):
     """Crea un nuevo post
 
@@ -200,13 +201,13 @@ def crearPost(request):
     Proceso:
         1. Se revisa el tipo de petición
         2. Se valida el formulario para crear el post
-        3. Se crea el post y sus estadísticas y finalmente
-        se guarda
+        3. Se crea el post y sus estadísticas y finalmente se guarda
         4. Se envía el correo al usuario con send_mail()
         5. Se redirige al usuario a la página index
     """
     if request.method == "POST":
-        post = {"titulo": request.POST["titulo"], "contenido": request.POST["contenido"]}
+        post = {"titulo": request.POST["titulo"],
+                "contenido": request.POST["contenido"]}
         # Validar datos del formulario
         if not validarContenido(post)["esValido"]:
             for mensaje in validarContenido(post)["mensajes"]:
@@ -214,9 +215,9 @@ def crearPost(request):
             return render(request, "blog/crearPost.html", post)
         usuario = request.user
         # Crear y guardar post
-        post = BlogPost(titulo=post["titulo"], contenido=post["contenido"], usuario=usuario)
+        post = BlogPost(titulo=post["titulo"],
+                        contenido=post["contenido"], usuario=usuario)
         post.save()
-
         send_mail(
             "Blog creado",
             "Blog creado con el título " + post.titulo,
@@ -233,13 +234,13 @@ def crearPost(request):
         return render(request, "blog/crearPost.html")
 
 
-@login_required(login_url='/iniciarSesion/')
+@login_required(login_url="/iniciarSesion/")
 def agregarComentario(request, id):
     """Agrega un comentario al post
 
     Entradas:
         request: es un objeto de petición Http
-        id: es un id de un post
+        id: es una hilera
     Precondiciones:
         No hay
     Salidas:
@@ -257,7 +258,8 @@ def agregarComentario(request, id):
     contenido = request.POST["texto"]
 
     if contenido != "":
-        comentario = ComentarioBlog(contenido=contenido, usuario=usuario, post=post)
+        comentario = ComentarioBlog(
+            contenido=contenido, usuario=usuario, post=post)
         comentario.save()
 
         blogEstadisticas = Estadisticas.objects.get(post=id)
@@ -276,7 +278,7 @@ def likePost(request, id):
 
     Entradas:
         request: es un objeto de petición Http
-        id: es un id de un post
+        id: es una hilera
     Precondiciones:
         No hay
     Salidas:
@@ -291,7 +293,8 @@ def likePost(request, id):
     post = BlogPost.objects.get(pk=id)
     post.numLikes += 1
     blogEstadisticas = Estadisticas.objects.get(post=post)
-    blogEstadisticas.porcentajeLikes = (post.numLikes * 100) / (post.numLikes + post.numDislikes)
+    blogEstadisticas.porcentajeLikes = (
+        post.numLikes * 100) / (post.numLikes + post.numDislikes)
     blogEstadisticas.save()
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
@@ -318,7 +321,8 @@ def dislikePost(request, id):
     post = BlogPost.objects.get(pk=id)
     post.numDislikes += 1
     blogEstadisticas = Estadisticas.objects.get(post=post)
-    blogEstadisticas.porcentajeLikes = (post.numLikes * 100) / (post.numLikes + post.numDislikes)
+    blogEstadisticas.porcentajeLikes = (
+        post.numLikes * 100) / (post.numLikes + post.numDislikes)
     blogEstadisticas.save()
     post.save()
     return HttpResponseRedirect(reverse("blog:detallesPost", args=[id]))
@@ -342,12 +346,10 @@ def cuenta(request):
     """
     usuario = request.user
     postsDelUsuario = BlogPost.objects.filter(usuario=usuario)
-
+    # Obtener estadisticas
     estadisticasPosts = []
     for post in postsDelUsuario:
         estadisticas = Estadisticas.objects.get(post=post)
         estadisticasPosts.append(estadisticas)
-
     context = {"estadisticasPosts": estadisticasPosts}
     return render(request, "blog/cuenta.html", context)
-

@@ -9,47 +9,28 @@
             <form action="{% url 'blog:registrarNuevoUsuario' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                    <input
-                            type="text"
-                            name="email"
-                            class="form-control form-control-lg"
-                            value="{{ email }}"
-                            placeholder="Email..."
-                    >
+                    <input type="text" name="email" class="form-control form-control-lg" value="{{ email }}"
+                        placeholder="Email...">
                 </div>
                 <div class="form-group">
-                    <input
-                            type="text"
-                            name="nombre"
-                            class="form-control form-control-lg"
-                            value="{{ nombre }}"
-                            placeholder="Nombre de usuario..."
-                    >
+                    <input type="text" name="nombre" class="form-control form-control-lg" value="{{ nombre }}"
+                        placeholder="Nombre de usuario...">
                 </div>
                 <div class="form-group">
-                    <input
-                            type="password"
-                            name="contraseña"
-                            class="form-control form-control-lg"
-                            value="{{ contraseña }}"
-                            placeholder="Contraseña..."
-                    >
+                    <input type="password" name="contraseña" class="form-control form-control-lg"
+                        value="{{ contraseña }}" placeholder="Contraseña...">
                 </div>
                 <div class="form-group">
-                    <input
-                            type="password"
-                            name="contraseña2"
-                            class="form-control form-control-lg"
-                            value="{{ contraseña2 }}"
-                            placeholder="Confirmar contraseña..."
-                    >
+                    <input type="password" name="contraseña2" class="form-control form-control-lg"
+                        value="{{ contraseña2 }}" placeholder="Confirmar contraseña...">
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <input type="submit" value="Registrarse" class="btn btn-success btn-block mb-2">
                     </div>
                     <div class="col-md-6">
-                        <a href="{% url 'blog:iniciarSesion' %}" class="btn btn-secondary btn-block mb-2">¿Registrado? Iniciar sesión</a>
+                        <a href="{% url 'blog:iniciarSesion' %}" class="btn btn-secondary btn-block mb-2">¿Registrado?
+                            Iniciar sesión</a>
                     </div>
                 </div>
             </form>
